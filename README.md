@@ -2,7 +2,7 @@
 
 This tutorial comes from this web site:
 
-[https://jeiwan.cc/posts/building-blockchain-in-go-part-1/](https://jeiwan.cc/posts/building-blockchain-in-go-part-1/)
+[https://jeiwan.cc](https://jeiwan.cc)
 
 and is aiming to build a blockchain in Golang
 
@@ -10,3 +10,11 @@ and is aiming to build a blockchain in Golang
 
 - Creating a Block
 - Creating a list of Blocks called a Blockchain
+
+## Step 2
+
+- Creating Proof of Work and validating it
+
+## Step 3 [TODO]
+
+[https://jeiwan.cc/posts/building-blockchain-in-go-part-3/](https://jeiwan.cc/posts/building-blockchain-in-go-part-3/)
