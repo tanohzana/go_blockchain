@@ -15,6 +15,12 @@ and is aiming to build a blockchain in Golang
 
 - Creating Proof of Work and validating it
 
-## Step 3 [TODO]
+## Step 3
 
-[https://jeiwan.cc/posts/building-blockchain-in-go-part-3/](https://jeiwan.cc/posts/building-blockchain-in-go-part-3/)
+- Stores blockchain in Bolt databse
+- Creates a BlockChainIterator
+- Creates a CLI
+
+## Step 4 [TODO]
+
+[https://jeiwan.cc/posts/building-blockchain-in-go-part-4/](https://jeiwan.cc/posts/building-blockchain-in-go-part-4/)
