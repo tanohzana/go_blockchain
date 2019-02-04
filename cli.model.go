@@ -7,56 +7,56 @@ import (
 	"strconv"
 )
 
-type CLI struct {
-	bc *Blockchain
-}
+type CLI struct{}
 
+// CLI should check that blockchain exists before calling other functions
 func (cli *CLI) Run() {
 	cli.validateArgs()
 
-	addBlockCmd := flag.NewFlagSet("addblock", flag.ExitOnError)
 	printChainCmd := flag.NewFlagSet("printchain", flag.ExitOnError)
+	createBlockchainCmd := flag.NewFlagSet("createblockchain", flag.ExitOnError)
+	getBalanceCmd := flag.NewFlagSet("getbalance", flag.ExitOnError)
 
-	addBlockData := addBlockCmd.String("data", "", "Block data")
+	createBlockchainData := createBlockchainCmd.String("address", "", "Genesis mining reward address")
+	getBalanceData := getBalanceCmd.String("address", "", "Address of which the balance is fetched")
 
 	switch os.Args[1] {
-	case "addblock":
-		addBlockCmd.Parse(os.Args[2:])
-
 	case "printchain":
 		printChainCmd.Parse(os.Args[2:])
+
+	case "createblockchain":
+		createBlockchainCmd.Parse(os.Args[2:])
+
+	case "getbalance":
+		getBalanceCmd.Parse(os.Args[2:])
+
 	default:
 		cli.printUsage()
 		os.Exit(1)
 	}
 
-	if addBlockCmd.Parsed() {
-		if *addBlockData == "" {
-			addBlockCmd.Usage()
-			os.Exit(1)
-		}
-
-		cli.addBlock(*addBlockData)
-	}
-
 	if printChainCmd.Parsed() {
 		cli.printChain()
 	}
-}
 
-func (cli *CLI) addBlock(data string) {
-	cli.bc.AddBlock(data)
-	fmt.Printf("Data added!")
+	if createBlockchainCmd.Parsed() {
+		cli.createBlockchain(*createBlockchainData)
+	}
+
+	if getBalanceCmd.Parsed() {
+		cli.getBalance(*getBalanceData)
+	}
 }
 
 func (cli *CLI) printChain() {
-	bci := cli.bc.Iterator()
+	bc := NewBlockchain("")
+	defer bc.db.Close()
+	bci := bc.Iterator()
 
 	for {
 		block := bci.Next()
 
 		fmt.Printf("Prev Hash: %x\n", block.PrevBlockHash)
-		fmt.Printf("Data: %s\n", block.Data)
 		fmt.Printf("Hash: %x\n", block.Hash)
 
 		pow := NewProofOfWork(block)
@@ -68,6 +68,27 @@ func (cli *CLI) printChain() {
 			break
 		}
 	}
+}
+
+func (cli *CLI) createBlockchain(address string) {
+	bc := CreateBlockchain(address)
+	bc.db.Close()
+	fmt.Printf("Blockchain created ! Printing blockchain...")
+	cli.printChain()
+}
+
+func (cli *CLI) getBalance(address string) {
+	bc := NewBlockchain(address)
+	defer bc.db.Close()
+
+	balance := 0
+	UTXOs := bc.FindUTXO(address)
+
+	for _, out := range UTXOs {
+		balance += out.Value
+	}
+
+	fmt.Printf("Balance of '%s': %d\n", address, balance)
 }
 
 // This function could be improved
