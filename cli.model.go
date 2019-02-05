@@ -16,9 +16,13 @@ func (cli *CLI) Run() {
 	printChainCmd := flag.NewFlagSet("printchain", flag.ExitOnError)
 	createBlockchainCmd := flag.NewFlagSet("createblockchain", flag.ExitOnError)
 	getBalanceCmd := flag.NewFlagSet("getbalance", flag.ExitOnError)
+	sendCmd := flag.NewFlagSet("send", flag.ExitOnError)
 
 	createBlockchainData := createBlockchainCmd.String("address", "", "Genesis mining reward address")
 	getBalanceData := getBalanceCmd.String("address", "", "Address of which the balance is fetched")
+	sendAmountData := sendCmd.String("amount", "", "Amount to send")
+	sendToData := sendCmd.String("to", "", "Address to send to")
+	sendFromData := sendCmd.String("from", "", "Address to send from")
 
 	switch os.Args[1] {
 	case "printchain":
@@ -29,6 +33,9 @@ func (cli *CLI) Run() {
 
 	case "getbalance":
 		getBalanceCmd.Parse(os.Args[2:])
+
+	case "send":
+		sendCmd.Parse(os.Args[2:])
 
 	default:
 		cli.printUsage()
@@ -45,6 +52,11 @@ func (cli *CLI) Run() {
 
 	if getBalanceCmd.Parsed() {
 		cli.getBalance(*getBalanceData)
+	}
+
+	if sendCmd.Parsed() {
+		sendAmountDataInt, _ := strconv.Atoi(*sendAmountData)
+		cli.send(*sendFromData, *sendToData, sendAmountDataInt)
 	}
 }
 
@@ -89,6 +101,16 @@ func (cli *CLI) getBalance(address string) {
 	}
 
 	fmt.Printf("Balance of '%s': %d\n", address, balance)
+}
+
+func (cli *CLI) send(from, to string, amount int) {
+	bc := NewBlockchain(from)
+	defer bc.db.Close()
+
+	tx := NewUTXOTransaction(from, to, amount, bc)
+	bc.AddBlock([]*Transaction{tx})
+
+	fmt.Printf("Success !")
 }
 
 // This function could be improved

@@ -27,7 +27,10 @@ and is aiming to build a blockchain in Golang
 
 [https://jeiwan.cc/posts/building-blockchain-in-go-part-3/](https://jeiwan.cc/posts/building-blockchain-in-go-part-3/)
 
-## Step 4 [TODO]
+## Step 4
+
+- Adds transactions
+- Enables sending coins
 
 [https://jeiwan.cc/posts/building-blockchain-in-go-part-4/](https://jeiwan.cc/posts/building-blockchain-in-go-part-4/)
 
